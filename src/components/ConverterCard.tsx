@@ -43,20 +43,22 @@ import { DetailedStatsModal } from './DetailedStatsModal';
 import { ShareModal } from './ShareModal';
 import { FindReplaceBar } from './FindReplaceBar';
 import { AdvancedToolsBar } from './AdvancedToolsBar';
-import { ThemeOption } from './Header';
+import { COLOR_THEMES } from '../utils/themeConfig';
 
 interface ConverterCardProps {
   onShowToast: (message: string, type?: 'success' | 'info' | 'warning') => void;
   isAdFreeMode: boolean;
   onToggleAdFree: () => void;
-  theme: ThemeOption;
+  themeId: string;
+  onSelectTheme: (themeId: string) => void;
 }
 
 export const ConverterCard: React.FC<ConverterCardProps> = ({
   onShowToast,
   isAdFreeMode,
   onToggleAdFree,
-  theme,
+  themeId,
+  onSelectTheme,
 }) => {
   const [text, setText] = useState<string>('');
   const [convertedText, setConvertedText] = useState<string>('');
@@ -83,7 +85,8 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const isCardDark = theme === 'full-dark';
+  const currentTheme = COLOR_THEMES[themeId] || COLOR_THEMES['nasir-cyan'];
+  const isCardDark = currentTheme.cardBgClass !== 'bg-white';
 
   // Check URL hash for pre-filled text
   useEffect(() => {
@@ -420,13 +423,11 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
         </div>
       </div>
 
-      {/* Main Converter Card - High Contrast Crisp White Center */}
+      {/* Main Converter Card */}
       <div
-        className={`rounded-xl border shadow-2xl overflow-hidden transition-all duration-200 ${
-          isCardDark
-            ? 'bg-zinc-900 border-zinc-800 text-white'
-            : 'bg-white border-zinc-200/90 text-slate-900'
-        }`}
+        className={`rounded-xl border overflow-hidden transition-all duration-200 ${
+          currentTheme.cardBgClass
+        } ${currentTheme.cardBorderClass} ${currentTheme.cardShadowClass}`}
       >
         {/* Find & Replace Bar (Collapsible) */}
         <FindReplaceBar
@@ -526,8 +527,8 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
         <div
           className={`px-4 py-3 border-t flex flex-wrap items-center justify-between gap-3 select-none ${
             isCardDark
-              ? 'bg-zinc-950/80 border-zinc-800'
-              : 'bg-slate-50/80 border-slate-200/90'
+              ? 'bg-[#040814]/80 border-cyan-900/40 text-slate-300'
+              : 'bg-slate-50/80 border-slate-200/90 text-slate-700'
           }`}
         >
           {/* Action icon group */}
@@ -537,9 +538,9 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
               onClick={() => handleCopy(viewMode === 'split' ? convertedText || text : text)}
               className={`p-2 rounded-lg border transition-all cursor-pointer ${
                 isCopied
-                  ? 'bg-emerald-50 border-emerald-300 text-emerald-600'
+                  ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400'
                   : isCardDark
-                  ? 'bg-zinc-900 border-zinc-700 hover:bg-zinc-800 text-zinc-200'
+                  ? 'bg-[#0a152e] border-cyan-900/50 hover:bg-[#0f1d38] hover:border-cyan-500/40 text-cyan-200'
                   : 'bg-white border-slate-200 hover:bg-slate-100 text-slate-700 shadow-2xs'
               }`}
               title="Copy to clipboard"
@@ -553,7 +554,7 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
               onClick={() => setShowShareModal(true)}
               className={`p-2 rounded-lg border transition-all cursor-pointer ${
                 isCardDark
-                  ? 'bg-zinc-900 border-zinc-700 hover:bg-zinc-800 text-zinc-200'
+                  ? 'bg-[#0a152e] border-cyan-900/50 hover:bg-[#0f1d38] hover:border-cyan-500/40 text-cyan-200'
                   : 'bg-white border-slate-200 hover:bg-slate-100 text-slate-700 shadow-2xs'
               }`}
               title="Share or create link"
@@ -567,7 +568,7 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
               onClick={() => handleDownload(viewMode === 'split' ? convertedText || text : text)}
               className={`p-2 rounded-lg border transition-all cursor-pointer ${
                 isCardDark
-                  ? 'bg-zinc-900 border-zinc-700 hover:bg-zinc-800 text-zinc-200'
+                  ? 'bg-[#0a152e] border-cyan-900/50 hover:bg-[#0f1d38] hover:border-cyan-500/40 text-cyan-200'
                   : 'bg-white border-slate-200 hover:bg-slate-100 text-slate-700 shadow-2xs'
               }`}
               title="Download text file (.txt)"
@@ -581,7 +582,7 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
               onClick={handleClear}
               className={`p-2 rounded-lg border transition-all cursor-pointer ${
                 isCardDark
-                  ? 'bg-zinc-900 border-zinc-700 hover:bg-rose-950/60 hover:text-rose-400 text-zinc-200'
+                  ? 'bg-[#0a152e] border-cyan-900/50 hover:bg-rose-950/60 hover:text-rose-400 text-cyan-200'
                   : 'bg-white border-slate-200 hover:bg-rose-50 hover:text-rose-600 text-slate-700 shadow-2xs'
               }`}
               title="Clear text"
@@ -595,7 +596,7 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
               onClick={() => setShowSettingsModal(true)}
               className={`p-2 rounded-lg border transition-all cursor-pointer ${
                 isCardDark
-                  ? 'bg-zinc-900 border-zinc-700 hover:bg-zinc-800 text-zinc-200'
+                  ? 'bg-[#0a152e] border-cyan-900/50 hover:bg-[#0f1d38] hover:border-cyan-500/40 text-cyan-200'
                   : 'bg-white border-slate-200 hover:bg-slate-100 text-slate-700 shadow-2xs'
               }`}
               title="Converter settings"
@@ -610,21 +611,21 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
             onClick={() => setShowStatsModal(true)}
             className={`text-xs font-mono tabular-nums transition-colors cursor-pointer px-2.5 py-1 rounded-md ${
               isCardDark
-                ? 'text-zinc-400 hover:text-white hover:bg-zinc-800'
+                ? 'text-cyan-300/80 hover:text-cyan-200 hover:bg-cyan-950/40'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
             }`}
             title="Click for full text analytics"
           >
             Character Count:{' '}
-            <span className="font-semibold text-slate-900 dark:text-white">
+            <span className="font-semibold text-slate-900 dark:text-cyan-200">
               {viewMode === 'split' ? splitStats.characterCount : stats.characterCount}
             </span>{' '}
             | Word Count:{' '}
-            <span className="font-semibold text-slate-900 dark:text-white">
+            <span className="font-semibold text-slate-900 dark:text-cyan-200">
               {viewMode === 'split' ? splitStats.wordCount : stats.wordCount}
             </span>{' '}
             | Line Count:{' '}
-            <span className="font-semibold text-slate-900 dark:text-white">
+            <span className="font-semibold text-slate-900 dark:text-cyan-200">
               {viewMode === 'split' ? splitStats.lineCount : stats.lineCount}
             </span>
           </button>
@@ -638,17 +639,17 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
           <button
             onClick={handleSentenceCase}
             className={`group border px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-2xs transition-all active:scale-98 cursor-pointer ${
-              activeCaseName === 'Sentence case' ? 'ring-2 ring-blue-500/40' : ''
+              activeCaseName === 'Sentence case' ? 'ring-2 ring-cyan-400' : ''
             } ${
               isCardDark
-                ? 'bg-zinc-900 hover:bg-zinc-800 border-zinc-700'
-                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300'
+                ? 'bg-[#0a152e] hover:bg-[#0f1d38] border-cyan-950 hover:border-cyan-500/40 text-slate-100'
+                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-800'
             }`}
           >
             <span className="bg-[#ffedd5] text-[#c2410c] text-xs font-bold px-1.5 py-0.5 rounded leading-none shrink-0">
               Sc
             </span>
-            <span className={`text-xs font-medium whitespace-nowrap ${isCardDark ? 'text-zinc-200' : 'text-slate-800'}`}>
+            <span className="text-xs font-medium whitespace-nowrap">
               Sentence case
             </span>
           </button>
@@ -657,17 +658,17 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
           <button
             onClick={handleLowerCase}
             className={`group border px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-2xs transition-all active:scale-98 cursor-pointer ${
-              activeCaseName === 'lower case' ? 'ring-2 ring-blue-500/40' : ''
+              activeCaseName === 'lower case' ? 'ring-2 ring-cyan-400' : ''
             } ${
               isCardDark
-                ? 'bg-zinc-900 hover:bg-zinc-800 border-zinc-700'
-                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300'
+                ? 'bg-[#0a152e] hover:bg-[#0f1d38] border-cyan-950 hover:border-cyan-500/40 text-slate-100'
+                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-800'
             }`}
           >
             <span className="bg-[#dcfce7] text-[#15803d] text-xs font-bold px-1.5 py-0.5 rounded leading-none shrink-0">
               lc
             </span>
-            <span className={`text-xs font-medium whitespace-nowrap ${isCardDark ? 'text-zinc-200' : 'text-slate-800'}`}>
+            <span className="text-xs font-medium whitespace-nowrap">
               lower case
             </span>
           </button>
@@ -676,17 +677,17 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
           <button
             onClick={handleUpperCase}
             className={`group border px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-2xs transition-all active:scale-98 cursor-pointer ${
-              activeCaseName === 'UPPER CASE' ? 'ring-2 ring-blue-500/40' : ''
+              activeCaseName === 'UPPER CASE' ? 'ring-2 ring-cyan-400' : ''
             } ${
               isCardDark
-                ? 'bg-zinc-900 hover:bg-zinc-800 border-zinc-700'
-                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300'
+                ? 'bg-[#0a152e] hover:bg-[#0f1d38] border-cyan-950 hover:border-cyan-500/40 text-slate-100'
+                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-800'
             }`}
           >
             <span className="bg-[#e0f2fe] text-[#0369a1] text-xs font-bold px-1.5 py-0.5 rounded leading-none shrink-0">
               UC
             </span>
-            <span className={`text-xs font-medium whitespace-nowrap ${isCardDark ? 'text-zinc-200' : 'text-slate-800'}`}>
+            <span className="text-xs font-medium whitespace-nowrap">
               UPPER CASE
             </span>
           </button>
@@ -695,17 +696,17 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
           <button
             onClick={handleCapitalizedCase}
             className={`group border px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-2xs transition-all active:scale-98 cursor-pointer ${
-              activeCaseName === 'Capitalized Case' ? 'ring-2 ring-blue-500/40' : ''
+              activeCaseName === 'Capitalized Case' ? 'ring-2 ring-cyan-400' : ''
             } ${
               isCardDark
-                ? 'bg-zinc-900 hover:bg-zinc-800 border-zinc-700'
-                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300'
+                ? 'bg-[#0a152e] hover:bg-[#0f1d38] border-cyan-950 hover:border-cyan-500/40 text-slate-100'
+                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-800'
             }`}
           >
             <span className="bg-[#f3e8ff] text-[#7e22ce] text-xs font-bold px-1.5 py-0.5 rounded leading-none shrink-0">
               CC
             </span>
-            <span className={`text-xs font-medium whitespace-nowrap ${isCardDark ? 'text-zinc-200' : 'text-slate-800'}`}>
+            <span className="text-xs font-medium whitespace-nowrap">
               Capitalized Case
             </span>
           </button>
@@ -714,17 +715,17 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
           <button
             onClick={handleAlternatingCase}
             className={`group border px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-2xs transition-all active:scale-98 cursor-pointer ${
-              activeCaseName === 'aLtErNaTiNg cAsE' ? 'ring-2 ring-blue-500/40' : ''
+              activeCaseName === 'aLtErNaTiNg cAsE' ? 'ring-2 ring-cyan-400' : ''
             } ${
               isCardDark
-                ? 'bg-zinc-900 hover:bg-zinc-800 border-zinc-700'
-                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300'
+                ? 'bg-[#0a152e] hover:bg-[#0f1d38] border-cyan-950 hover:border-cyan-500/40 text-slate-100'
+                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-800'
             }`}
           >
             <span className="bg-[#fef9c3] text-[#a16207] text-xs font-bold px-1.5 py-0.5 rounded leading-none shrink-0">
               aC
             </span>
-            <span className={`text-xs font-medium whitespace-nowrap ${isCardDark ? 'text-zinc-200' : 'text-slate-800'}`}>
+            <span className="text-xs font-medium whitespace-nowrap">
               aLtErNaTiNg cAsE
             </span>
           </button>
@@ -733,17 +734,17 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
           <button
             onClick={handleTitleCase}
             className={`group border px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-2xs transition-all active:scale-98 cursor-pointer ${
-              activeCaseName === 'Title Case' ? 'ring-2 ring-blue-500/40' : ''
+              activeCaseName === 'Title Case' ? 'ring-2 ring-cyan-400' : ''
             } ${
               isCardDark
-                ? 'bg-zinc-900 hover:bg-zinc-800 border-zinc-700'
-                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300'
+                ? 'bg-[#0a152e] hover:bg-[#0f1d38] border-cyan-950 hover:border-cyan-500/40 text-slate-100'
+                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-800'
             }`}
           >
             <span className="bg-[#ccfbf1] text-[#0f766e] text-xs font-bold px-1.5 py-0.5 rounded leading-none shrink-0">
               TC
             </span>
-            <span className={`text-xs font-medium whitespace-nowrap ${isCardDark ? 'text-zinc-200' : 'text-slate-800'}`}>
+            <span className="text-xs font-medium whitespace-nowrap">
               Title Case
             </span>
           </button>
@@ -752,17 +753,17 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
           <button
             onClick={handleInverseCase}
             className={`group border px-3 py-1.5 rounded-lg flex items-center gap-2 shadow-2xs transition-all active:scale-98 cursor-pointer ${
-              activeCaseName === 'InVErsE CaSe' ? 'ring-2 ring-blue-500/40' : ''
+              activeCaseName === 'InVErsE CaSe' ? 'ring-2 ring-cyan-400' : ''
             } ${
               isCardDark
-                ? 'bg-zinc-900 hover:bg-zinc-800 border-zinc-700'
-                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300'
+                ? 'bg-[#0a152e] hover:bg-[#0f1d38] border-cyan-950 hover:border-cyan-500/40 text-slate-100'
+                : 'bg-white hover:bg-slate-50 border-slate-200 hover:border-slate-300 text-slate-800'
             }`}
           >
             <span className="bg-[#fce7f3] text-[#be185d] text-xs font-bold px-1.5 py-0.5 rounded leading-none shrink-0">
               iC
             </span>
-            <span className={`text-xs font-medium whitespace-nowrap ${isCardDark ? 'text-zinc-200' : 'text-slate-800'}`}>
+            <span className="text-xs font-medium whitespace-nowrap">
               InVErsE CaSe
             </span>
           </button>
@@ -774,6 +775,8 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
           className={`px-3.5 py-2 rounded-lg flex items-center gap-1.5 text-xs font-semibold shadow-xs transition-colors shrink-0 cursor-pointer ${
             isAdFreeMode
               ? 'bg-emerald-600 hover:bg-emerald-700 text-white'
+              : isCardDark
+              ? 'bg-[#040814] hover:bg-[#0a152e] text-cyan-300 border border-cyan-500/40 shadow-[0_0_15px_rgba(6,182,212,0.15)]'
               : 'bg-zinc-950 hover:bg-zinc-800 text-white border border-zinc-800'
           }`}
           title="Toggle 100% Ad-Free Focus Mode"

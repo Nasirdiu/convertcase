@@ -1,47 +1,33 @@
 import React from 'react';
-import { Type, Sun, Moon, Contrast } from 'lucide-react';
-
-export type ThemeOption = 'side-black-white' | 'full-dark' | 'full-light';
+import { Type } from 'lucide-react';
+import { ThemeSelector } from './ThemeSelector';
+import { COLOR_THEMES } from '../utils/themeConfig';
 
 interface HeaderProps {
   onOpenShortcuts: () => void;
   onOpenGuide: () => void;
   onReset: () => void;
-  theme: ThemeOption;
-  onChangeTheme: (theme: ThemeOption) => void;
+  themeId: string;
+  onChangeTheme: (themeId: string) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onOpenShortcuts,
   onOpenGuide,
   onReset,
-  theme,
+  themeId,
   onChangeTheme,
 }) => {
-  const isLight = theme === 'full-light';
-
-  const cycleTheme = () => {
-    if (theme === 'side-black-white') onChangeTheme('full-dark');
-    else if (theme === 'full-dark') onChangeTheme('full-light');
-    else onChangeTheme('side-black-white');
-  };
-
-  const themeLabel =
-    theme === 'side-black-white'
-      ? 'Side Black / Center White'
-      : theme === 'full-dark'
-      ? 'Full Dark'
-      : 'Full Light';
+  const currentTheme = COLOR_THEMES[themeId] || COLOR_THEMES['nasir-cyan'];
+  const isLight = !currentTheme.isDark;
 
   return (
     <header
       className={`border-b sticky top-0 z-40 transition-colors backdrop-blur-md ${
-        isLight
-          ? 'border-slate-200/80 bg-white/80 text-slate-900'
-          : 'border-zinc-800/80 bg-zinc-950/80 text-white'
-      }`}
+        currentTheme.headerBgClass
+      } ${currentTheme.headerBorderClass}`}
     >
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-6">
         {/* Zone 1: Single element wordmark */}
         <a
           href="/"
@@ -49,51 +35,49 @@ export const Header: React.FC<HeaderProps> = ({
             isLight ? 'text-slate-900' : 'text-white'
           }`}
         >
-          <div className="w-7 h-7 rounded-md bg-white text-black flex items-center justify-center font-black text-sm shadow-xs border border-zinc-200">
-            <Type className="w-4 h-4 text-black" />
+          <div className="w-7 h-7 rounded-md bg-cyan-500 text-black flex items-center justify-center font-black text-sm shadow-[0_0_12px_rgba(6,182,212,0.4)]">
+            <Type className="w-4 h-4 text-black stroke-[2.5]" />
           </div>
-          <span>ConvertCase</span>
+          <div className="flex items-center gap-1.5">
+            <span>ConvertCase</span>
+            <span className="hidden sm:inline-block text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+              Pro
+            </span>
+          </div>
         </a>
 
-        {/* Zone 2: 4-5 concise single-line nav links */}
-        <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-zinc-400">
+        {/* Zone 2: Concise single-line nav links */}
+        <nav className="hidden md:flex items-center gap-6 text-xs font-medium text-slate-400">
           <a
             href="#converter"
-            className="hover:text-white transition-colors whitespace-nowrap shrink-0"
+            className="hover:text-cyan-300 transition-colors whitespace-nowrap shrink-0"
           >
             Case Converter
           </a>
           <button
             onClick={onOpenGuide}
-            className="hover:text-white transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            className="hover:text-cyan-300 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
           >
             Guide & Rules
           </button>
           <button
             onClick={onOpenShortcuts}
-            className="hover:text-white transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+            className="hover:text-cyan-300 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
           >
             Shortcuts
           </button>
-          <button
-            onClick={cycleTheme}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-md border border-zinc-700 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-200 transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-            title="Cycle theme appearance"
-          >
-            <Contrast className="w-3.5 h-3.5 text-zinc-300" />
-            <span>Theme: {themeLabel}</span>
-          </button>
         </nav>
 
-        {/* Zone 3: 1 primary action */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Zone 3: 1 primary action & theme picker */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          <ThemeSelector
+            currentThemeId={themeId}
+            onSelectTheme={onChangeTheme}
+          />
+
           <button
             onClick={onReset}
-            className={`px-3.5 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-              isLight
-                ? 'bg-slate-900 hover:bg-slate-800 text-white'
-                : 'bg-white hover:bg-zinc-200 text-black shadow-sm'
-            }`}
+            className="px-3 py-1.5 text-xs font-bold rounded-lg transition-all whitespace-nowrap shrink-0 cursor-pointer bg-cyan-500 hover:bg-cyan-400 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95"
           >
             New Document
           </button>

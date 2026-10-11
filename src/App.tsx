@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState } from 'react';
-import { Header, ThemeOption } from './components/Header';
+import React, { useState, useEffect } from 'react';
+import { Header } from './components/Header';
 import { ConverterCard } from './components/ConverterCard';
 import { ToastContainer, ToastMessage } from './components/Toast';
 import { ShortcutsModal } from './components/ShortcutsModal';
 import { CaseGuideModal } from './components/CaseGuideModal';
 import { ShieldCheck, Zap, Sparkles, Check } from 'lucide-react';
+import { COLOR_THEMES } from './utils/themeConfig';
 
 export default function App() {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -17,8 +18,25 @@ export default function App() {
   const [showGuide, setShowGuide] = useState(false);
   const [isAdFreeMode, setIsAdFreeMode] = useState(false);
   const [resetKey, setResetKey] = useState(0);
-  // Default to 'side-black-white': sides/background are black, center editor is crisp white!
-  const [theme, setTheme] = useState<ThemeOption>('side-black-white');
+
+  // Default to Nasir Portfolio theme ('nasir-cyan') matching nasir369.vercel.app
+  const [themeId, setThemeId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('convertcase_theme') || 'nasir-cyan';
+    }
+    return 'nasir-cyan';
+  });
+
+  const currentTheme = COLOR_THEMES[themeId] || COLOR_THEMES['nasir-cyan'];
+
+  const handleSelectTheme = (newThemeId: string) => {
+    setThemeId(newThemeId);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('convertcase_theme', newThemeId);
+    }
+    const themeName = COLOR_THEMES[newThemeId]?.name || newThemeId;
+    showToast(`Theme changed to: ${themeName}`, 'info');
+  };
 
   const showToast = (text: string, type: 'success' | 'info' | 'warning' = 'success') => {
     const id = Date.now().toString() + Math.random().toString();
@@ -49,23 +67,21 @@ export default function App() {
     showToast('New document created', 'info');
   };
 
-  const isLight = theme === 'full-light';
+  const isLight = !currentTheme.isDark;
 
   return (
     <div
       className={`min-h-screen flex flex-col antialiased transition-colors duration-200 ${
-        isLight
-          ? 'bg-slate-100 text-slate-800 selection:bg-blue-100 selection:text-blue-900'
-          : 'bg-[#09090b] text-white selection:bg-zinc-800 selection:text-white'
-      }`}
+        currentTheme.bgClass
+      } ${currentTheme.textColor} ${currentTheme.selectionClass}`}
     >
       {/* Top Header */}
       <Header
         onOpenShortcuts={() => setShowShortcuts(true)}
         onOpenGuide={() => setShowGuide(true)}
         onReset={handleNewDocument}
-        theme={theme}
-        onChangeTheme={setTheme}
+        themeId={themeId}
+        onChangeTheme={handleSelectTheme}
       />
 
       {/* Main Content Area */}
@@ -81,18 +97,25 @@ export default function App() {
           </h1>
           <p
             className={`text-xs sm:text-sm leading-relaxed ${
-              isLight ? 'text-slate-600' : 'text-zinc-400'
+              isLight ? 'text-slate-600' : 'text-slate-400'
             }`}
           >
-            Type or paste your content to instantly convert between Sentence case, lower case, UPPER CASE, Title Case, and developer formats with live word and character counters.
+            Convert between Sentence case, lower case, UPPER CASE, Title Case, and developer formats with live word and character counters.
           </p>
 
-          {isAdFreeMode && (
-            <div className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-950/60 border border-emerald-700/80 text-emerald-300 rounded-full text-xs font-medium animate-in fade-in">
-              <Check className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Ad-Free Focus Mode Active</span>
-            </div>
-          )}
+          <div className="flex items-center justify-center gap-2 mt-3 flex-wrap">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-2xs font-semibold bg-cyan-950/80 border border-cyan-500/40 text-cyan-300">
+              <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: currentTheme.dotColor }} />
+              <span>{currentTheme.name}</span>
+            </span>
+
+            {isAdFreeMode && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 bg-emerald-950/60 border border-emerald-700/80 text-emerald-300 rounded-full text-2xs font-medium animate-in fade-in">
+                <Check className="w-3 h-3 text-emerald-400" />
+                <span>Ad-Free Focus Active</span>
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Primary Case Converter Card */}
@@ -102,7 +125,8 @@ export default function App() {
             onShowToast={showToast}
             isAdFreeMode={isAdFreeMode}
             onToggleAdFree={handleToggleAdFree}
-            theme={theme}
+            themeId={themeId}
+            onSelectTheme={handleSelectTheme}
           />
         </section>
 
@@ -110,18 +134,18 @@ export default function App() {
         <section
           id="features"
           className={`mt-16 sm:mt-20 pt-10 border-t ${
-            isLight ? 'border-slate-200/60' : 'border-zinc-800/80'
+            isLight ? 'border-slate-200' : 'border-cyan-950/60'
           }`}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div
               className={`rounded-xl p-5 border shadow-2xs transition-colors ${
                 isLight
-                  ? 'bg-white/80 border-slate-200 text-slate-800'
-                  : 'bg-zinc-900/60 border-zinc-800 text-zinc-300'
+                  ? 'bg-white border-slate-200 text-slate-800'
+                  : 'bg-[#070e20] border-cyan-900/40 text-slate-300'
               }`}
             >
-              <div className="w-9 h-9 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center mb-3">
+              <div className="w-9 h-9 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center mb-3">
                 <Zap className="w-4 h-4" />
               </div>
               <h3 className={`text-sm font-semibold mb-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>
@@ -135,8 +159,8 @@ export default function App() {
             <div
               className={`rounded-xl p-5 border shadow-2xs transition-colors ${
                 isLight
-                  ? 'bg-white/80 border-slate-200 text-slate-800'
-                  : 'bg-zinc-900/60 border-zinc-800 text-zinc-300'
+                  ? 'bg-white border-slate-200 text-slate-800'
+                  : 'bg-[#070e20] border-cyan-900/40 text-slate-300'
               }`}
             >
               <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-3">
@@ -153,8 +177,8 @@ export default function App() {
             <div
               className={`rounded-xl p-5 border shadow-2xs transition-colors ${
                 isLight
-                  ? 'bg-white/80 border-slate-200 text-slate-800'
-                  : 'bg-zinc-900/60 border-zinc-800 text-zinc-300'
+                  ? 'bg-white border-slate-200 text-slate-800'
+                  : 'bg-[#070e20] border-cyan-900/40 text-slate-300'
               }`}
             >
               <div className="w-9 h-9 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center mb-3">
@@ -175,53 +199,40 @@ export default function App() {
       <footer
         className={`mt-auto border-t py-6 text-center text-xs transition-colors ${
           isLight
-            ? 'border-slate-200/80 bg-white/60 text-slate-500'
-            : 'border-zinc-800/80 bg-zinc-950/80 text-zinc-500'
+            ? 'border-slate-200 bg-white/80 text-slate-500'
+            : 'border-cyan-950/60 bg-[#040814]/90 text-slate-400'
         }`}
       >
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2 font-medium">
-            <span className={isLight ? 'text-slate-700' : 'text-zinc-300'}>ConvertCase</span>
-            <span className="text-zinc-600">·</span>
+            <span className={isLight ? 'text-slate-700' : 'text-slate-200'}>ConvertCase</span>
+            <span className="text-slate-600">·</span>
             <span>
               Developed by{' '}
               <a
                 href="https://nasir369.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`font-semibold underline underline-offset-2 transition-colors ${
-                  isLight ? 'text-blue-600 hover:text-blue-700' : 'text-blue-400 hover:text-blue-300'
-                }`}
+                className="font-semibold underline underline-offset-2 text-cyan-400 hover:text-cyan-300 transition-colors"
               >
                 nasir369
               </a>
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <a
-              href="https://nasir369.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`hover:underline font-medium transition-colors ${
-                isLight ? 'text-slate-700 hover:text-black' : 'text-zinc-300 hover:text-white'
-              }`}
-            >
-              nasir369 Portfolio
-            </a>
-            <span className="text-zinc-600">·</span>
             <button
               onClick={() => setShowGuide(true)}
-              className="hover:text-zinc-200 transition-colors cursor-pointer"
+              className="hover:text-cyan-300 transition-colors cursor-pointer"
             >
               Case Guide
             </button>
             <button
               onClick={() => setShowShortcuts(true)}
-              className="hover:text-zinc-200 transition-colors cursor-pointer"
+              className="hover:text-cyan-300 transition-colors cursor-pointer"
             >
               Shortcuts
             </button>
-            <span className="text-zinc-600">·</span>
+            <span className="text-slate-600">·</span>
             <span>Private & Browser-Based</span>
           </div>
         </div>
