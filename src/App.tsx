@@ -11,6 +11,7 @@ import { ShortcutsModal } from './components/ShortcutsModal';
 import { CaseGuideModal } from './components/CaseGuideModal';
 import { ShieldCheck, Zap, Sparkles, Check } from 'lucide-react';
 import { COLOR_THEMES } from './utils/themeConfig';
+import { MobileBottomColorBar } from './components/MobileBottomColorBar';
 
 export default function App() {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -212,7 +213,7 @@ export default function App() {
 
       {/* Footer */}
       <footer
-        className={`mt-auto border-t py-6 text-center text-xs transition-colors ${
+        className={`mt-auto border-t py-6 pb-20 sm:pb-6 text-center text-xs transition-colors ${
           isLight
             ? 'border-slate-200 bg-white/80 text-slate-500'
             : 'border-cyan-950/60 bg-[#040814]/90 text-slate-400'
@@ -252,6 +253,12 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Floating Bottom Color Bar for Mobile (All 6 colors directly at the bottom!) */}
+      <MobileBottomColorBar
+        currentThemeId={themeId}
+        onSelectTheme={handleSelectTheme}
+      />
 
       {/* Modal Dialogs */}
       <ShortcutsModal isOpen={showShortcuts} onClose={() => setShowShortcuts(false)} />
