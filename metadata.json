@@ -1,0 +1,6 @@
+{
+  "name": "ConvertCase - Text Case Converter",
+  "description": "Smart online text case converter with Sentence case, UPPER CASE, lower case, Title Case, word counters, and formatting utilities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
