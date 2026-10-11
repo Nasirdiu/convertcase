@@ -29,6 +29,21 @@ export default function App() {
 
   const currentTheme = COLOR_THEMES[themeId] || COLOR_THEMES['nasir-cyan'];
 
+  // Sync full mobile viewport background and browser theme-color
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.body.style.backgroundColor = currentTheme.bgHex;
+      document.documentElement.style.backgroundColor = currentTheme.bgHex;
+      let metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (!metaTheme) {
+        metaTheme = document.createElement('meta');
+        metaTheme.setAttribute('name', 'theme-color');
+        document.head.appendChild(metaTheme);
+      }
+      metaTheme.setAttribute('content', currentTheme.bgHex);
+    }
+  }, [themeId, currentTheme]);
+
   const handleSelectTheme = (newThemeId: string) => {
     setThemeId(newThemeId);
     if (typeof window !== 'undefined') {
@@ -85,9 +100,9 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 py-8 sm:py-12 px-4 sm:px-6 max-w-6xl mx-auto w-full">
+      <main className="flex-1 py-4 sm:py-10 px-3 sm:px-6 max-w-6xl mx-auto w-full">
         {/* Section Intro */}
-        <div className="text-center mb-6 sm:mb-8 max-w-2xl mx-auto">
+        <div className="text-center mb-4 sm:mb-8 max-w-2xl mx-auto">
           <h1
             className={`text-2xl sm:text-3xl font-bold tracking-tight mb-2 ${
               isLight ? 'text-slate-900' : 'text-white'

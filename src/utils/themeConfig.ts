@@ -1,12 +1,13 @@
 /**
  * Professional color palettes and theme configurations.
- * Pure color names only as requested.
+ * Pure color names only with exact background hexes for 100% mobile coverage.
  */
 
 export interface ThemeConfig {
   id: string;
   name: string;
   dotColor: string; // for theme switcher preview
+  bgHex: string; // for body and meta theme-color sync
   description: string;
   isDark: boolean;
   bgClass: string;
@@ -30,6 +31,7 @@ export const COLOR_THEMES: Record<string, ThemeConfig> = {
     id: 'nasir-cyan',
     name: 'Cyan Blue',
     dotColor: '#06b6d4',
+    bgHex: '#040814',
     description: 'Midnight navy canvas with electric cyan blue accents',
     isDark: true,
     bgClass: 'bg-[#040814]',
@@ -51,6 +53,7 @@ export const COLOR_THEMES: Record<string, ThemeConfig> = {
     id: 'nasir-contrast',
     name: 'Navy & White',
     dotColor: '#38bdf8',
+    bgHex: '#040814',
     description: 'Dark navy canvas with high-contrast crisp white editor card',
     isDark: true,
     bgClass: 'bg-[#040814]',
@@ -72,6 +75,7 @@ export const COLOR_THEMES: Record<string, ThemeConfig> = {
     id: 'side-black-white',
     name: 'Black & White',
     dotColor: '#ffffff',
+    bgHex: '#09090b',
     description: 'Pitch black sides with crisp white center card',
     isDark: true,
     bgClass: 'bg-[#09090b]',
@@ -93,6 +97,7 @@ export const COLOR_THEMES: Record<string, ThemeConfig> = {
     id: 'emerald-glow',
     name: 'Emerald Green',
     dotColor: '#10b981',
+    bgHex: '#02130e',
     description: 'Deep dark canvas with radiant emerald green accents',
     isDark: true,
     bgClass: 'bg-[#02130e]',
@@ -114,6 +119,7 @@ export const COLOR_THEMES: Record<string, ThemeConfig> = {
     id: 'violet-luxury',
     name: 'Purple & Violet',
     dotColor: '#a855f7',
+    bgHex: '#0b071a',
     description: 'Deep dark canvas with luminous purple and violet accents',
     isDark: true,
     bgClass: 'bg-[#0b071a]',
@@ -135,6 +141,7 @@ export const COLOR_THEMES: Record<string, ThemeConfig> = {
     id: 'clean-light',
     name: 'Clean Light',
     dotColor: '#3b82f6',
+    bgHex: '#f1f5f9',
     description: 'Clean light canvas with white card & soft blue accents',
     isDark: false,
     bgClass: 'bg-slate-100',

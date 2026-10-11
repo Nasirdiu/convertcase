@@ -459,7 +459,7 @@ export const ConverterCard: React.FC<ConverterCardProps> = ({
                 setHistoryIndex(updated.length - 1);
               }}
               placeholder="Type or paste your content here"
-              className={`w-full min-h-[280px] md:min-h-[320px] p-5 md:p-6 resize-y bg-transparent focus:outline-none placeholder:text-slate-400 ${
+              className={`w-full min-h-[220px] sm:min-h-[280px] md:min-h-[320px] p-4 sm:p-5 md:p-6 resize-y bg-transparent focus:outline-none placeholder:text-slate-400 ${
                 fontSizeClasses[settings.fontSize]
               } ${isMono ? 'font-mono' : 'font-sans'} ${
                 isCardDark ? 'text-white' : 'text-slate-900'
