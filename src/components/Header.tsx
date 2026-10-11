@@ -71,17 +71,14 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Zone 3: Actions & Color Theme Picker */}
         <div className="flex items-center gap-2 shrink-0">
-          {/* Desktop Theme Picker (on mobile, colors are directly placed at the bottom bar!) */}
-          <div className="hidden sm:inline-block">
-            <ThemeSelector
-              currentThemeId={themeId}
-              onSelectTheme={onChangeTheme}
-            />
-          </div>
+          <ThemeSelector
+            currentThemeId={themeId}
+            onSelectTheme={onChangeTheme}
+          />
 
           <button
             onClick={onReset}
-            className="px-2.5 sm:px-3 py-1.5 text-xs font-bold rounded-lg transition-all whitespace-nowrap shrink-0 cursor-pointer bg-cyan-500 hover:bg-cyan-400 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95"
+            className="hidden sm:inline-flex px-3 py-1.5 text-xs font-bold rounded-lg transition-all whitespace-nowrap shrink-0 cursor-pointer bg-cyan-500 hover:bg-cyan-400 text-black shadow-[0_0_15px_rgba(6,182,212,0.3)] active:scale-95"
           >
             New Document
           </button>
